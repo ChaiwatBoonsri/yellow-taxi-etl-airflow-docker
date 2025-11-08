@@ -1,6 +1,3 @@
-"""
-Dependencies: polars
-"""
 import polars as pl
 import os
 import time
@@ -72,4 +69,4 @@ def clean_data(year, month):
         print(f"An error occurred: {e}")
 
 if __name__ == "__main__": 
-    clean_data(2025, 1)
+    clean_data(2025, 3)

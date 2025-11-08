@@ -1,6 +1,3 @@
-"""
-Dependencies: requires, tqdm
-"""
 import requests # for HTTP requests
 import os # for file operations
 from tqdm import tqdm # for progress bar
@@ -63,4 +60,4 @@ def download_file(year, month):
             print("Incomplete file removed")
 
 if __name__ == "__main__":
-    download_file(year=2025, month=2)
+    download_file(2025, 3)

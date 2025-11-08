@@ -42,4 +42,4 @@ def load_raw_sample_data(year, month):
         exit(1)
 
 if __name__ == "__main__":
-    load_raw_sample_data(2025, 2)
+    load_raw_sample_data(2025, 3)

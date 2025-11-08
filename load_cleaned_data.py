@@ -1,6 +1,8 @@
 import polars as pl
 import os
 import time
+import tqdm
+import math
 from connection import connection
 
 def load_cleaned_data(year, month):
@@ -29,17 +31,36 @@ def load_cleaned_data(year, month):
 
     # Write data to database
     TABLE_NAME = f"{year}_{month_str}_cleaned_data"
-    try:
 
-        df_sample.write_database(
-            table_name=TABLE_NAME,
-            connection=connection_string,
-            if_table_exists="replace"  # replace table if it exists
-        )
+    chunk_size = 100000  # number of rows per chunk
+    df_height = df_sample.height # get total number of rows
+    total_chunks = math.ceil(df_height / chunk_size) 
+    print(f"Writing {df_height} rows to {TABLE_NAME} in {total_chunks} chunks...")
+
+    progress_bar = tqdm.tqdm(
+        total=total_chunks, 
+        desc=f"Loading to table {TABLE_NAME}", 
+        unit="chunk"
+    )
+
+    try:
+        # Write data in chunks
+        for i, chunk in enumerate(df_sample.iter_slices(chunk_size)): # iterate over chunks
+            write_logic = "replace" if i == 0 else "append" # replace for first chunk, append for others
+            chunk.write_database(
+                table_name=TABLE_NAME,
+                connection=connection_string,
+                if_table_exists=write_logic
+            )
+            progress_bar.update(1)
+        progress_bar.close()
+
         print(f"Data written to table {TABLE_NAME} successfully")
     except Exception as e: 
-        print(f"Error writing to database: {e}")
+        if 'progress_bar' in locals(): # ensure progress bar is closed on error
+            progress_bar.close()
+        print(f"\nError writing to database: {e}")
         exit(1)
 
 if __name__ == "__main__":
-    load_cleaned_data(2025, 2)
+    load_cleaned_data(2025, 3)
