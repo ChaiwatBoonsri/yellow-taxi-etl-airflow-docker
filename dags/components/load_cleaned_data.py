@@ -11,8 +11,12 @@ def load_cleaned_data(year, month):
     
     # Define file path
     month_str = f"{month:02d}" # format month as two digits
-    file_name = f"yellow_tripdata_{year}-{month_str}_cleaned.parquet"
-    input_path = os.path.join("data/processed", file_name)
+    file_name = f"cleaned_yellow_tripdata_{year}-{month_str}.parquet"
+
+    shared_data_path = "/opt/airflow/shared_data"
+    # shared_data_windows_path = "data"
+    input_path = os.path.join(shared_data_path, "processed", file_name)
+    # input_path = os.path.join(shared_data_windows_path, "processed", file_name)
 
     if not os.path.exists(input_path):
         print(f"File {input_path} does not exist.")
@@ -35,7 +39,7 @@ def load_cleaned_data(year, month):
     chunk_size = 100000  # number of rows per chunk
     df_height = df_sample.height # get total number of rows
     total_chunks = math.ceil(df_height / chunk_size) 
-    print(f"Writing {df_height} rows to {TABLE_NAME} in {total_chunks} chunks...")
+    print(f"Writing {df_height} rows to table {TABLE_NAME} in {total_chunks} chunks...")
 
     progress_bar = tqdm.tqdm(
         total=total_chunks, 
@@ -63,4 +67,4 @@ def load_cleaned_data(year, month):
         exit(1)
 
 if __name__ == "__main__":
-    load_cleaned_data(2025, 3)
+    load_cleaned_data(2025, 5)

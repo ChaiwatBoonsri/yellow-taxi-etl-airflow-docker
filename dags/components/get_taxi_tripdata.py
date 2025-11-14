@@ -9,8 +9,12 @@ def download_file(year, month):
     file_name = f"yellow_tripdata_{year}-{month_str}.parquet"
     url = f"https://d37ci6vzurychx.cloudfront.net/trip-data/{file_name}"
 
-    save_dir = "data/raw"
-    save_path = os.path.join(save_dir, file_name)
+    shared_data_path = "/opt/airflow/shared_data"
+    # shared_data_windows_path = "data"
+    save_dir = os.path.join(shared_data_path, "raw")
+    # save_dir = os.path.join(shared_data_windows_path, "raw")
+    save_path = os.path.join(shared_data_path, "raw", file_name)
+    # save_path = os.path.join(shared_data_windows_path, "raw", file_name)
 
     os.makedirs(save_dir, exist_ok=True) # create directory if not exists
 
@@ -60,4 +64,4 @@ def download_file(year, month):
             print("Incomplete file removed")
 
 if __name__ == "__main__":
-    download_file(2025, 3)
+    download_file(2025, 5)

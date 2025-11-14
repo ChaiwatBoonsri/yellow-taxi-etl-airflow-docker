@@ -6,11 +6,18 @@ def clean_data(year, month):
     
     # Define file paths
     month_str = f"{month:02d}"
-    input_path = f"data/raw/yellow_tripdata_{year}-{month_str}.parquet"
-    processed_path = "data/processed"
-    output_path = os.path.join(processed_path, f"yellow_tripdata_{year}-{month_str}_cleaned.parquet")
+    file_name = f"yellow_tripdata_{year}-{month_str}.parquet"
 
-    os.makedirs(processed_path, exist_ok=True) # create directory if not exists
+    shared_data_path = "/opt/airflow/shared_data"
+    # shared_data_windows_path = "data"
+    input_path = os.path.join(shared_data_path, "raw", file_name)
+    # input_path = os.path.join(shared_data_windows_path, "raw", file_name)
+    output_dir = os.path.join(shared_data_path, "processed")
+    # output_dir = os.path.join(shared_data_windows_path, "processed")
+    output_path = os.path.join(shared_data_path, "processed", f"cleaned_{file_name}")
+    # output_path = os.path.join(shared_data_windows_path, "processed", f"cleaned_{file_name}")
+
+    os.makedirs(output_dir, exist_ok=True) # create directory if not exists
     if not os.path.exists(input_path):
         print(f"Input file {input_path} does not exist.")
         return
@@ -69,4 +76,4 @@ def clean_data(year, month):
         print(f"An error occurred: {e}")
 
 if __name__ == "__main__": 
-    clean_data(2025, 3)
+    clean_data(2025, 5)
