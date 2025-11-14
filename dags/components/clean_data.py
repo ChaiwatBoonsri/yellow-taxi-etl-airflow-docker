@@ -1,6 +1,7 @@
 import polars as pl
 import os
 import time
+import sys
 
 def clean_data(year, month):
     
@@ -9,13 +10,9 @@ def clean_data(year, month):
     file_name = f"yellow_tripdata_{year}-{month_str}.parquet"
 
     shared_data_path = "/opt/airflow/shared_data"
-    # shared_data_windows_path = "data"
     input_path = os.path.join(shared_data_path, "raw", file_name)
-    # input_path = os.path.join(shared_data_windows_path, "raw", file_name)
     output_dir = os.path.join(shared_data_path, "processed")
-    # output_dir = os.path.join(shared_data_windows_path, "processed")
     output_path = os.path.join(shared_data_path, "processed", f"cleaned_{file_name}")
-    # output_path = os.path.join(shared_data_windows_path, "processed", f"cleaned_{file_name}")
 
     os.makedirs(output_dir, exist_ok=True) # create directory if not exists
     if not os.path.exists(input_path):
@@ -76,4 +73,15 @@ def clean_data(year, month):
         print(f"An error occurred: {e}")
 
 if __name__ == "__main__": 
-    clean_data(2025, 5)
+    try:
+        year = int(sys.argv[1])
+        month = int(sys.argv[2])
+    except (IndexError):
+        print("Error: Missing arguments.")
+        print("Usage: python clean_data.py <year> <month>")
+    except ValueError:
+        print("Year and month must be integers.")
+        sys.exit(1)
+    
+    print(f"--- Starting Cleaning data for {year}-{month:02d} ---")
+    clean_data(year, month)

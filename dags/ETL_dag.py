@@ -24,15 +24,21 @@ with DAG(
         task_id = "run_extract",
         bash_command = f"""
         cd {components_path}
-        python get_taxi_tripdata.py
+        export YEAR_TO_PROCESS={{{{ dag_run.conf.get('year', logical_date.year) }}}} 
+        export MONTH_TO_PROCESS={{{{ dag_run.conf.get('month', logical_date.month) }}}}
+        python get_taxi_tripdata.py $YEAR_TO_PROCESS $MONTH_TO_PROCESS
         """
+        # Note: The above bash_command uses Airflow's Jinja templating to get 'year' and 'month' 
+        # from dag_run configuration or defaults to logical_date values.
     )
 
     clean_task = BashOperator(
         task_id = "run_clean_data",
         bash_command = f"""
         cd {components_path}
-        python clean_data.py
+        export YEAR_TO_PROCESS={{{{ dag_run.conf.get('year', logical_date.year) }}}} 
+        export MONTH_TO_PROCESS={{{{ dag_run.conf.get('month', logical_date.month) }}}}
+        python clean_data.py $YEAR_TO_PROCESS $MONTH_TO_PROCESS
         """
     )
 
@@ -40,7 +46,9 @@ with DAG(
         task_id = "run_load_clean_data",
         bash_command = f"""
         cd {components_path}
-        python load_cleaned_data.py
+        export YEAR_TO_PROCESS={{{{ dag_run.conf.get('year', logical_date.year) }}}} 
+        export MONTH_TO_PROCESS={{{{ dag_run.conf.get('month', logical_date.month) }}}}
+        python load_cleaned_data.py $YEAR_TO_PROCESS $MONTH_TO_PROCESS
         """
     )
 

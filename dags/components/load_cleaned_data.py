@@ -3,6 +3,7 @@ import os
 import time
 import tqdm
 import math
+import sys
 from connection import connection
 
 def load_cleaned_data(year, month):
@@ -14,9 +15,7 @@ def load_cleaned_data(year, month):
     file_name = f"cleaned_yellow_tripdata_{year}-{month_str}.parquet"
 
     shared_data_path = "/opt/airflow/shared_data"
-    # shared_data_windows_path = "data"
     input_path = os.path.join(shared_data_path, "processed", file_name)
-    # input_path = os.path.join(shared_data_windows_path, "processed", file_name)
 
     if not os.path.exists(input_path):
         print(f"File {input_path} does not exist.")
@@ -67,4 +66,15 @@ def load_cleaned_data(year, month):
         exit(1)
 
 if __name__ == "__main__":
-    load_cleaned_data(2025, 5)
+    try:
+        year = int(sys.argv[1])
+        month = int(sys.argv[2])
+    except (IndexError):
+        print("Error: Missing arguments.")
+        print("Usage: python load_cleaned_data.py <year> <month>")
+    except ValueError:
+        print("Year and month must be integers.")
+        sys.exit(1)
+    
+    print(f"--- Starting load data for {year}-{month:02d} ---")
+    load_cleaned_data(year, month)

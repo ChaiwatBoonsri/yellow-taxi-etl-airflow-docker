@@ -1,5 +1,6 @@
 import requests # for HTTP requests
 import os # for file operations
+import sys # for command-line arguments
 from tqdm import tqdm # for progress bar
 
 def download_file(year, month):
@@ -10,11 +11,8 @@ def download_file(year, month):
     url = f"https://d37ci6vzurychx.cloudfront.net/trip-data/{file_name}"
 
     shared_data_path = "/opt/airflow/shared_data"
-    # shared_data_windows_path = "data"
     save_dir = os.path.join(shared_data_path, "raw")
-    # save_dir = os.path.join(shared_data_windows_path, "raw")
     save_path = os.path.join(shared_data_path, "raw", file_name)
-    # save_path = os.path.join(shared_data_windows_path, "raw", file_name)
 
     os.makedirs(save_dir, exist_ok=True) # create directory if not exists
 
@@ -64,4 +62,16 @@ def download_file(year, month):
             print("Incomplete file removed")
 
 if __name__ == "__main__":
-    download_file(2025, 5)
+    try:
+        year = int(sys.argv[1])
+        month = int(sys.argv[2])
+    except (IndexError):
+        print("Error: Missing arguments.")
+        print("Usage: python get_taxi_tripdata.py <year> <month>")
+        sys.exit(1)
+    except ValueError:
+        print("Year and month must be integers.")
+        sys.exit(1)
+    
+    print(f"--- Starting Download Task for {year}-{month:02d} ---")
+    download_file(year, month)

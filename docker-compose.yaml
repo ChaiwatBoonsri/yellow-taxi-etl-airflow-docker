@@ -51,12 +51,12 @@ x-airflow-common:
   # and uncomment the "build" line below, Then run `docker-compose build` to build the images.
   image: apache/airflow:3.1.2
   # build: .
+  env_file:
+    - ./.env
   environment:
     &airflow-common-env
     AIRFLOW__CORE__EXECUTOR: CeleryExecutor
     AIRFLOW__CORE__AUTH_MANAGER: airflow.providers.fab.auth_manager.fab_auth_manager.FabAuthManager
-    AIRFLOW__CORE__FERNET_KEY: 'HsSbH15F4ZCWxB6VsLWwq-AgKrOE87-5QNNFGzgIA1g='
-    AIRFLOW__API_AUTH__JWT_SECRET: '06c9a328a383da6e66e151dd61c87b472d5a63b7449181a2b66bed1ea148a85b'
     AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
     AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@postgres/airflow
     AIRFLOW__CELERY__BROKER_URL: redis://:@redis:6379/0
